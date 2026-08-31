@@ -1,4 +1,4 @@
-erDiagram
+​```mermaid
     CLIENT||--o{ COMMANDE : places
     COMMANDE ||--|{ LIGNECOMMANDE : contains
     PRODUIT ||--o{ LIGNECOMMANDE : includes
@@ -23,3 +23,4 @@ erDiagram
         float prix_unitaire_ht
         int qte
     }
+​```
