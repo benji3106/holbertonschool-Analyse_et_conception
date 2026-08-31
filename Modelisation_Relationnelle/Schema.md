@@ -1,8 +1,8 @@
-​```mermaid
-    erDiagram
-    CLIENT ||--o{ COMMANDE : places
-    COMMANDE ||--|{ LIGNECOMMANDE : contains
-    PRODUIT ||--o{ LIGNECOMMANDE : includes
+```mermaid
+erDiagram
+    CLIENT ||--o{ COMMANDE : passe
+    COMMANDE ||--|{ LIGNECOMMANDE : compose
+    PRODUIT ||--o{ LIGNECOMMANDE : concerne
     CLIENT {
         int id_client PK
         string client_nom
@@ -24,4 +24,4 @@
         float prix_unitaire_ht
         int qte
     }
-​```
+```
