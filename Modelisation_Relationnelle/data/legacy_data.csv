@@ -1,0 +1,5 @@
+id_cmd;date_achat;client_nom;client_contact;adr_livraison;code_prod;designation;prix_unitaire_ht;qte;total_ligne;statut_cmd
+CMD-901;2026-07-28;Acme Corp;jean@acme.com;10 rue Usine, Paris;P-01;Bureau Chêne;250.00;2;500.00;LIVREE
+CMD-901;2026-07-28;Acme Corp;jean@acme.com;10 rue Usine, Paris;P-02;Chaise Ergonomique;120.00;4;480.00;LIVREE
+CMD-902;2026-07-28;TechNova;contact@technova.io;5 ave Tech, Lyon;P-01;Bureau Chêne;250.00;1;250.00;EN_COURS
+CMD-903;2026-07-29;Acme Corp;jean@acme.com;10 rue Usine, Paris;P-03;Lampe LED;45.00;10;450.00;EN_COURS
