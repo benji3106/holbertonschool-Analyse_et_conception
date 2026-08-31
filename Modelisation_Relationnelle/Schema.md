@@ -1,4 +1,5 @@
 ​```mermaid
+    erDiagram
     CLIENT||--o{ COMMANDE : places
     COMMANDE ||--|{ LIGNECOMMANDE : contains
     PRODUIT ||--o{ LIGNECOMMANDE : includes
