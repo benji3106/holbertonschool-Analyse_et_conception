@@ -17,11 +17,12 @@ erDiagram
     PRODUIT {
         string code_prod PK
         string designation
+        decimal prix_unitaire_ht
     }
     LIGNECOMMANDE {
         string id_cmd PK,FK
         string code_prod PK,FK
-        float prix_unitaire_ht
+        decimal prix_unitaire_ht
         int qte
     }
 ```
