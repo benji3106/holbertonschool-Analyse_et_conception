@@ -1,3 +1,10 @@
+openapi: 3.0.3
+info:
+  title: MegaShop-B2B API
+  version: 1.0.0
+  description: API publique de MegaShop-B2B.
+servers:
+  - url: https://api.megashop-b2b.com/v1
 paths:
   /payments/webhook:
     post:
@@ -23,3 +30,38 @@ paths:
 
 components:
   schemas:
+    WebhookPayload:
+      type: object
+      required:
+        - orderId
+        - status
+        - transactionId
+      additionalProperties: false
+      properties:
+        orderId:
+          type: string
+          format: uuid
+          description: Identifiant unique de la commande concernée par le paiement.
+          example: 11111111-2222-4333-8444-555555555555
+        status:
+          type: string
+          enum:
+            - SUCCESS
+            - FAILED
+          description: Statut final de la transaction transmis par la banque.
+          example: SUCCESS
+        transactionId:
+          type: string
+          pattern: '^TXN-[0-9]{8}$'
+          description: Identifiant de transaction bancaire, préfixé par TXN- suivi de 8 chiffres.
+          example: TXN-12345678
+
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: Message décrivant la raison du rejet du payload.
+          example: Le champ transactionId ne respecte pas le format attendu.
