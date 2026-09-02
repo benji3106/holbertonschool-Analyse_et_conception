@@ -3,11 +3,18 @@ info:
   title: MegaShop-B2B API
   version: 1.0.0
   description: API publique de MegaShop-B2B.
+  contact:
+    name: Équipe API MegaShop-B2B
+    email: api-support@megashop-b2b.com
 servers:
   - url: https://api.megashop-b2b.com/v1
+tags:
+  - name: Payments
+    description: Opérations liées aux paiements et aux notifications bancaires.
 paths:
   /payments/webhook:
     post:
+      operationId: receivePaymentWebhook
       summary: Réception d'une notification de paiement bancaire
       description: Webhook public appelé par la banque partenaire pour notifier MegaShop-B2B du succès ou de l'échec d'une transaction de paiement.
       tags:
@@ -27,7 +34,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
 components:
   schemas:
     WebhookPayload:
@@ -55,7 +61,6 @@ components:
           pattern: '^TXN-[0-9]{8}$'
           description: Identifiant de transaction bancaire, préfixé par TXN- suivi de 8 chiffres.
           example: TXN-12345678
-
     ErrorResponse:
       type: object
       required:
