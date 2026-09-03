@@ -1,0 +1,150 @@
+openapi: 3.0.3
+
+info:
+  title: StockMaster-Pro - API Inventaire
+  description: |
+    API de déclaration des mouvements de stock de l'entrepôt MegaShop-B2B.
+    Le stock n'est jamais stocké : il résulte de l'agrégation du journal
+    des mouvements. Toute sortie supérieure au stock disponible est rejetée.
+  contact:
+    name: Architecture MegaShop-B2B
+    email: architecture@megashop-b2b.local
+  version: 1.0.0
+
+servers:
+  - url: https://api.megashop-b2b.local/v1
+    description: Environnement de développement
+
+tags:
+  - name: Mouvements
+    description: Déclaration des entrées et sorties de stock
+
+paths:
+  /inventory/movements:
+    post:
+      tags:
+        - Mouvements
+      summary: Déclarer un mouvement de stock
+      description: |
+        Enregistre une entrée ou une sortie sur un emplacement.
+        Une sortie dont la quantité excède le stock disponible est rejetée
+        avec un code 409 : le stock ne peut jamais devenir négatif.
+      operationId: declarerMouvementStock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MouvementRequest'
+      responses:
+        '201':
+          description: Mouvement enregistré
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MouvementResponse'
+        '400':
+          description: Payload non conforme au contrat
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+        '404':
+          description: Emplacement inexistant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+        '409':
+          description: Stock insuffisant pour la sortie demandée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+
+components:
+  schemas:
+
+    MouvementRequest:
+      type: object
+      description: Déclaration d'un mouvement à enregistrer.
+      required:
+        - emplacementId
+        - typeMouvement
+        - quantite
+      additionalProperties: false
+      properties:
+        emplacementId:
+          type: integer
+          format: int32
+          minimum: 1
+          description: Identifiant de l'emplacement (SQL - `emplacement.id_emplacement`).
+          example: 1
+        typeMouvement:
+          $ref: '#/components/schemas/TypeMouvement'
+        quantite:
+          type: integer
+          format: int32
+          minimum: 1
+          description: |
+            Quantité déplacée, toujours strictement positive.
+            Le sens est porté par `typeMouvement`, jamais par le signe
+            (SQL : `mouvement_stock.quantite`, contrainte `chk_quantite_positive`).
+          example: 50
+
+    MouvementResponse:
+      type: object
+      description: Mouvement enregistré dans le journal.
+      required:
+        - mouvementId
+        - emplacementId
+        - typeMouvement
+        - quantite
+        - dateMouvement
+      properties:
+        mouvementId:
+          type: integer
+          format: int32
+          description: Identifiant du mouvement (SQL - `mouvement_stock.id_mouvement`).
+          example: 42
+        emplacementId:
+          type: integer
+          format: int32
+          example: 1
+        typeMouvement:
+          $ref: '#/components/schemas/TypeMouvement'
+        quantite:
+          type: integer
+          format: int32
+          example: 50
+        dateMouvement:
+          type: string
+          format: date-time
+          description: Horodatage de l'enregistrement (SQL - `mouvement_stock.date_mouvement`).
+          example: '2026-09-03T10:56:29+02:00'
+
+    TypeMouvement:
+      type: string
+      enum:
+        - ENTREE
+        - SORTIE
+      description: |
+        Sens du mouvement (SQL - `mouvement_stock.type_mouvement`,
+        contrainte `chk_type_mouvement`).
+      example: ENTREE
+
+    Erreur:
+      type: object
+      description: Représentation normalisée d'une erreur.
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Identifiant technique de l'erreur.
+          example: STOCK_INSUFFISANT
+        message:
+          type: string
+          description: Message explicite destiné au manutentionnaire.
+          example: 'Stock insuffisant sur l''emplacement 1 : disponible 42, demandé 100.'
