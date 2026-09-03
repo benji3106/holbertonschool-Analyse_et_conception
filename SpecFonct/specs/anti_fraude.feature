@@ -14,3 +14,19 @@ Scenario: Exemption de contrôle pour les clients VIP
   And une commande d'un montant de 15000 euros à destination de la "Syldavie"
   When le client soumet son paiement
   Then le paiement est accepté par la gouvernance
+
+  Scenario Outline: Blocage par la gouvernance selon la matrice de risque
+    Given un client au statut standard
+    And une commande d'un montant de <montant> euros à destination de la "<destination>"
+    When le client soumet son paiement
+    Then le paiement est <resultat> par la gouvernance
+
+    Examples:
+      | montant | destination | resultat |
+      | 3000    | France      | accepté  |
+      | 20000   | France      | accepté  |
+      | 8000    | Syldavie    | accepté  |
+      | 9999    | Syldavie    | accepté  |
+      | 10000   | Syldavie    | accepté  |
+      | 10001   | Syldavie    | refusé   |
+      | 25000   | Bordurie    | refusé   |
